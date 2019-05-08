@@ -3,71 +3,35 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
+#include <SDL/SDL_rotozoom.h>
 #include "fnc.h"
 
-void init_img(image *img)
+image init_img(char nomimage[100],int x,int y)
 {
-SDL_Surface *surf = IMG_Load("bgg.png");
+image img;
+img.back=IMG_Load(nomimage);//load image
+img.positiond.x=x;//position x de bg
+img.positiond.y=y;//position y de bg
+img.positionc.x=0;
+img.positionc.y=0;
+img.positionc.h=700;
+img.positionc.w=900;
 
-img->back=IMG_Load("bgg.png");
-img->positiond.x=0;
-img->positiond.y=150;
-img->posrect.x=0;
-img->posrect.y=800;
-
+return img;
 }
-void init_img2(image2 *img2)
-{ 
-    SDL_Surface * surfM = IMG_Load("bggx.png");
-    
-img2->back=IMG_Load("bggx.png");
-img2->positiond2.x=0;//position x de bg
-img2->positiond2.y=150;//position y de bg
-
-
-//return img2;
-}
-
-
-void display(SDL_Surface *ecran,image *img,personage *per)
-{ if (per->positionperso.x>800)
-          img->posrect.x+=800;
-        
-SDL_BlitSurface(img->back,NULL,ecran,&img->positiond);//afficher l image
-}
-void display2(SDL_Surface *ecran,image2 img2)
+void init_splitscreen(image* I1,image *I2,int screenw)
 {
-SDL_BlitSurface(img2.back,NULL,ecran,&img2.positiond2);//afficher l image
+int int_screenw=screenw/2;
+I1->positionc.w=int_screenw;
+I2->positionc.w=int_screenw;
+I2->positiond.x=int_screenw;
 }
-
-
-int acceleration(personage *per,Uint32 dt)
-{ int vitesse=30;
-   SDL_Rect px;
-      px.x=250;
-      px.y=370;
-        if (per->positionperso.x>px.x)
-         {
-             vitesse=per->velocity/dt+per->acceleration;
-             
-
-          
-         }
-         else
-          vitesse=10;
-        
-       
-        if (per->positionperso.x>px.x+400)
-          vitesse=10;
-
- return vitesse;
+void display(SDL_Surface *ecran,image img)
+{
+SDL_BlitSurface(img.back,&img.positionc,ecran,&img.positiond);//afficher l image
 }
-int input(personage* per,int i,int *continuer ,Uint32 dt)
-{ int t,vitesse=10;
-
-  vitesse=acceleration(per,dt);
-          per->velocity=50;
-          per->direction=50;    
+int input(robottt* rob,int i,int *continuer)
+{
 SDL_Event event;
 SDL_PollEvent(&event);
         switch(event.type)
@@ -78,176 +42,318 @@ SDL_PollEvent(&event);
             case SDL_KEYDOWN:
             switch(event.key.keysym.sym)
             {
-             
+                break; 
                 case SDLK_a :
                 i=0;
-                per->positionperso.x +=100;
-                per->positionperso.y-=50;
+                rob->positionrobot.x +=50;
+                rob->positionrobot.y-=50;
                 i++;
-            
+
+                break; 
+                case SDLK_RIGHT :
+i=0;
+                                rob->positionrobot.x +=50;
+i++;
+                break; 
+                case SDLK_r :
+                
                 break; 
                 case SDLK_UP:
                 i=0;
      
 
-                per->positionperso.y-=50;
+                rob->positionrobot.y-=50;
                 i++;
                 break;
-                case SDLK_RIGHT:
-                if (i>=9)
-                    i=0;
-              per->acceleration+=1;
-              per->direction=0;
-                //per->positionperso.x+=per->positionperso.x+dt;
-              // per->positionperso.x+=per->velocity/dt+per->acceleration;
-              per->positionperso.x+=vitesse;
-                i++;
-
-
-                break;
-
-               
            }
-           break;
-              case SDL_MOUSEBUTTONUP:
-            switch(event.button.button)
-            {
-
-            case SDL_BUTTON_LEFT :
-
-                
-                      i=0;
-                per->positionperso.x +=100;
-                per->positionperso.y-=50;
-                i++;
-             
-                    break;
-
-            case SDL_BUTTON_RIGHT :
-
-                
-               if (i>=9)
-                    i=0;
-              
-                per->positionperso.x+=vitesse;
-
-                i++;
-
-                    break;
-
-                
-                }
-        
         }
-               
+printf("fonction i= %d \n",i); 
 return i;
 }
-void jump (personage *per)
-{
-                 if (per->positionperso.y<360)
-            { 
-                per->positionperso.y=360;
-           }
-}
 
-void init_perso(  personage *per)
-
+robottt init_perso()
 {
 
-  
+    robottt rob;
 
-    per->perso[0] = IMG_Load("1.png");
+    rob.robot[0] = IMG_Load("1.png");
 
-per->perso[1] = IMG_Load("2.png");
+    rob.robot[1] = IMG_Load("2.png");
 
-    per->perso[2] = IMG_Load("3.png");
+    rob.robot[2] = IMG_Load("3.png");
 
-    per->perso[3] = IMG_Load("4.png");
+    rob.robot[3] = IMG_Load("4.png");
 
-    per->perso[4] = IMG_Load("5.png");
+    rob.robot[4] = IMG_Load("3.png");
 
-    per->perso[5] = IMG_Load("6.png");
+    rob.robot[5] = IMG_Load("2.png");
 
-    per->perso[6] = IMG_Load("7.png");
+    rob.robot[6] = IMG_Load("1.png");
 
-    per->perso[7] = IMG_Load("6.png");
+    rob.robot[7] = IMG_Load("2.png");
 
-    per->perso[8] = IMG_Load("5.png");
+    rob.robot[8] = IMG_Load("3.png");
 
-    per->direction=0;
+      rob.positionrobot.x = 0;
+    rob.positionrobot.y = 400; 
 
-  per->velocity=0; //velocity=0
-  per->acceleration=0;
-  per->Mass=70;
-  per->moving=0;
+  return rob;
 
-      per->positionperso.x = 0;
-    per->positionperso.y = 360; 
-   
+}  
 
-
-     
-
-
-}
-SDL_Color GetPixel(SDL_Surface *pSurface,int x,int y)
+void display_perso(SDL_Surface *ecran,robottt rob,int i,SDL_Rect positiond)
 {
-
-SDL_Color color;
-Uint32 col=0;
-//Determine position
-char* pPosition=(char* ) pSurface->pixels;
-pPosition+= (pSurface->pitch * y);
-pPosition+= (pSurface->format->BytesPerPixel *x);
-memcpy(&col ,pPosition ,pSurface->format->BytesPerPixel);
-//convertir color
-SDL_GetRGB(col,pSurface->format, &color.r, &color.g, &color.b);
-SDL_Color Get_Pixel32;
-  
-return (color);
-
+SDL_BlitSurface(rob.robot[i],NULL,ecran,&rob.positionrobot);
+}
+void Load_robot(robottt *rob,char Dir[100])
+{ FILE* f=fopen(Dir,"rb");
+robottt tmp;
+fread(&tmp,sizeof(robottt),1,f);
+rob->positionrobot=tmp.positionrobot;
+/*C->Direction=tmp.Direction;
+C->State=tmp.State;
+C->Score=tmp.Score;
+C->Health=tmp.Health;
+C->iframe=tmp.iframe;
+C->zoom=tmp.zoom;*/
+fclose(f);
 }
 
-int collision_perprisens1(image2 *img2,personage *per) // collision personage principale avec obstacle "right" 
+void Load_Map(image *img,char Dir[100])
+{ FILE* f=fopen(Dir,"rb");
+image tmp;
+fread(&tmp,sizeof(image),1,f);
+img->positiond=tmp.positiond;
+img->positionc=tmp.positionc;
+
+sprintf(Dir,"map.png");
+printf("%s",Dir);
+img->back=IMG_Load(Dir);
+/*M->Background_Map=zoomSurface(M->Background_Map,0.45,0.45,0);
+sprintf(Dir,"./src/Image/Mask/Level%d/image000.png",M->Num_Map);
+M->Mask_Map=IMG_Load(Dir);
+M->Mask_Map=zoomSurface(M->Mask_Map,0.45,0.45,0);*/
+
+fclose(f);
+}
+
+void Load(robottt *rob, image *img, char Dir[100])
 {
-    int verif=0;
-    int i,j,test=0;
-    SDL_Color couleur[7];
-
-couleur[0]=GetPixel (img2->back, per->positionperso.x + per->positionperso.w-320 ,  per->positionperso.y + per->positionperso.h/2); // middle right(8)
-couleur[1]=GetPixel (img2->back,(per->positionperso.x + per->positionperso.w)-320, per->positionperso.y +per->positionperso.h);// down right(7)
-couleur[2]=GetPixel (img2->back,(per->positionperso.x + per->positionperso.w/2)-320, per->positionperso.y +per->positionperso.h);// down right(7)
-
-    printf("%d    %d   %d\n",couleur->r,couleur->b,couleur->g );
-    
-
-
-for(i=0;i<3&&(verif==0);i++)
-    { 
-        if((couleur[i].r == 0) && ((couleur[i].g ==0) && (couleur[i].b == 0))) // objet noir 
-
-        {
-            verif=1;
-            
-            
-        }
-       
-    }
-          if (verif==1)
-         {
-              per->positionperso.y=450;
-
-         }
-
-    
-    return verif;
-     
+char tmp_Dir[100];
+sprintf(tmp_Dir,"%s/robottt.bin",Dir);
+Load_robot(rob,tmp_Dir);
+sprintf(tmp_Dir,"%s/image.bin",Dir);
+Load_Map(img,tmp_Dir);
 }
 
-void display_perso(SDL_Surface *ecran,personage *per,int i)
+
+
+
+void Save_robottt(robottt C,char Dir[100])
+{ FILE* f=fopen(Dir,"wb");
+fwrite(&C,sizeof(robottt),1,f);
+fclose(f);
+}
+
+void Save_image(image M,char Dir[100])
+{ FILE* f=fopen(Dir,"wb");
+fwrite(&M,sizeof(image),1,f);
+fclose(f);
+}
+
+
+
+void Save(robottt C, image M, char Dir[100])
 {
-SDL_BlitSurface(per->perso[i],NULL,ecran,&per->positionperso);
+char tmp_Dir[100];
+sprintf(tmp_Dir,"%s/robottt.bin",Dir);
+Save_robottt(C,tmp_Dir);
+sprintf(tmp_Dir,"%s/image.bin",Dir);
+Save_image(M,tmp_Dir);
 }
+void Init_Save_Menu(save *S)
+{
+S->Background_Save=IMG_Load("./src/Image/Save/Background.png");
+S->Save_Lum=IMG_Load("./src/Image/Save/Lum.png");
+S->Rect_Save.x=200;
+S->Rect_Save.y=100;
+
+S->Save_Opt[0].y=254;
+S->Save_Opt[0].x=335;
+
+printf("\nSave_O_0_x: %d | Save_O_0_y: %d \n",S->Save_Opt[0].x,S->Save_Opt[0].y);
+S->Save_Opt[1].y=254;
+S->Save_Opt[1].x=475;
+
+S->Mouse_Pos_y=0;
+S->Mouse_Pos_x=0;
+S->PS=-1;
+S->PSP=-1;
+}
+
+int SaveFNCTN(save* S,SDL_Surface* Screen,int* continuer,SDL_Event *event)
+{
+int PHASE=2;
+SDL_BlitSurface(S->Background_Save,NULL,Screen,&S->Rect_Save);
+    {
+      if ( event->type == SDL_QUIT )  {  (*continuer)= 0;  }
+
+      if ( event->type == SDL_KEYDOWN ) // Bouttons
+      {
+	switch(event->key.keysym.sym)
+	{
+        case SDLK_ESCAPE :
+	 { PHASE = 1; break; }
+	case SDLK_LEFT:
+		{ if (S->PS>0) S->PS--;
+		  else if (S->PS == -1) S->PS=0;
+
+		  break;
+		}
+	case SDLK_RIGHT :
+		{ if ((S->PS < 1)&&(S->PS>=0)) S->PS++;
+		  else if (S->PS == -1) S->PS=1;
+		  break;
+		}
+	case SDLK_RETURN :
+		{
+		  if(S->PS!=-1) {if (S->PS==0) PHASE=11; else PHASE=6;}
+		  break;
+		}
+	case SDLK_KP_ENTER :
+		{
+		  if(S->PS!=-1) {if (S->PS==0) PHASE=11; else PHASE=6;}
+		  break;
+		}	
+	}
+      }
+	else if (event->type==SDL_MOUSEMOTION) // MOUSE
+{
+      SDL_GetMouseState(&S->Mouse_Pos_x, &S->Mouse_Pos_y);
+
+     if ( S->Mouse_Pos_y >= S->Save_Opt[0].y && S->Mouse_Pos_y <= S->Save_Opt[0].y+50)
+     {
+          if (S->Mouse_Pos_x >= S->Save_Opt[0].x && S->Mouse_Pos_x < S->Save_Opt[0].x+50) {
+                 S->PS=0;
+          }
+          else if (S->Mouse_Pos_x >= S->Save_Opt[1].x && S->Mouse_Pos_x < S->Save_Opt[1].x+50)
+          {
+		 S->PS=1;
+          }
+	  else S->PS=-1;
+     }
+          else S->PS=-1;
+}
+}
+if(S->PS!=-1)
+	if(SDL_MOUSEBUTTONDOWN)
+		if(event->type==SDL_MOUSEBUTTONDOWN && event->button.button== SDL_BUTTON_LEFT)
+			{
+			if (S->PS==0) PHASE=11;
+			else PHASE=6;
+			}
+		 if (S->PS!=-1) SDL_BlitSurface(S->Save_Lum,NULL,Screen,&S->Save_Opt[S->PS]);
+
+//---------------------------------------------------------------------------------------------------/
+S->PSP=S->PS;
+SDL_Flip(Screen);
+return PHASE;
+}
+//-----------------------LOAD---------------------
+
+void Init_Load_Menu(save *S)
+{
+S->Background_Save=IMG_Load("./src/Image/Save/BackgroundLoad.png");
+S->Save_Lum=IMG_Load("./src/Image/Save/Lum.png");
+S->Rect_Save.x=200;
+S->Rect_Save.y=100;
+
+S->Save_Opt[0].y=254;
+S->Save_Opt[0].x=335;
+
+printf("\nSave_O_0_x: %d | Save_O_0_y: %d \n",S->Save_Opt[0].x,S->Save_Opt[0].y);
+S->Save_Opt[1].y=254;
+S->Save_Opt[1].x=475;
+
+S->Mouse_Pos_y=0;
+S->Mouse_Pos_x=0;
+S->PS=-1;
+S->PSP=-1;
+}
+
+int LoadFNCTN(save* S,SDL_Surface* Screen,int* continuer,SDL_Event *event)
+{
+int PHASE=13;
+SDL_BlitSurface(S->Background_Save,NULL,Screen,&S->Rect_Save);
+    {
+      if ( event->type == SDL_QUIT )  {  (*continuer)= 0;  }
+
+      if ( event->type == SDL_KEYDOWN ) // Bouttons
+      {
+	switch(event->key.keysym.sym)
+	{
+        case SDLK_ESCAPE :
+	 { PHASE = 6; break; }
+	case SDLK_LEFT:
+		{ if (S->PS>0) S->PS--;
+		  else if (S->PS == -1) S->PS=0;
+
+		  break;
+		}
+	case SDLK_RIGHT :
+		{ if ((S->PS < 1)&&(S->PS>=0)) S->PS++;
+		  else if (S->PS == -1) S->PS=1;
+		  break;
+		}
+	case SDLK_RETURN :
+		{
+		  if(S->PS!=-1) {if (S->PS==0) PHASE=12; else PHASE=1;}
+		  break;
+		}
+	case SDLK_KP_ENTER :
+		{
+		  if(S->PS!=-1) {if (S->PS==0) PHASE=12; else PHASE=1;}
+		  break;
+		}	
+	}
+      }
+	else if (event->type==SDL_MOUSEMOTION) // MOUSE
+{
+      SDL_GetMouseState(&S->Mouse_Pos_x, &S->Mouse_Pos_y);
+
+     if ( S->Mouse_Pos_y >= S->Save_Opt[0].y && S->Mouse_Pos_y <= S->Save_Opt[0].y+50)
+     {
+          if (S->Mouse_Pos_x >= S->Save_Opt[0].x && S->Mouse_Pos_x < S->Save_Opt[0].x+50) {
+                 S->PS=0;
+          }
+          else if (S->Mouse_Pos_x >= S->Save_Opt[1].x && S->Mouse_Pos_x < S->Save_Opt[1].x+50)
+          {
+		 S->PS=1;
+          }
+	  else S->PS=-1;
+     }
+          else S->PS=-1;
+}
+}
+if(S->PS!=-1)
+	if(SDL_MOUSEBUTTONDOWN)
+		if(event->type==SDL_MOUSEBUTTONDOWN && event->button.button== SDL_BUTTON_LEFT)
+			{
+			if (S->PS==0) PHASE=12;
+			else PHASE=1;
+			}
+		 if (S->PS!=-1) SDL_BlitSurface(S->Save_Lum,NULL,Screen,&S->Save_Opt[S->PS]);
+
+//---------------------------------------------------------------------------------------------------/
+S->PSP=S->PS;
+SDL_Flip(Screen);
+return PHASE;
+}
+
+
+
+
+ 
 
 
 
